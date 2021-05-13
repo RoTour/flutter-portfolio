@@ -1,9 +1,5 @@
+import 'package:bmi_calculator/constants.dart';
 import 'package:flutter/material.dart';
-
-const labelTextStyle = TextStyle(
-  fontSize: 18,
-  color: Color(0xff8d8e98),
-);
 
 class ReusableCardContent extends StatelessWidget {
   final String label;
@@ -23,7 +19,7 @@ class ReusableCardContent extends StatelessWidget {
         SizedBox(height: 15),
         Text(
           label,
-          style: labelTextStyle,
+          style: kLabelTextStyle,
         ),
       ],
     );
@@ -33,18 +29,22 @@ class ReusableCardContent extends StatelessWidget {
 class ReusableCard extends StatelessWidget {
   final Color color;
   final Widget cardChild;
+  final void Function() onTap;
 
-  ReusableCard({@required this.color, this.cardChild});
+  ReusableCard({@required this.color, @required this.onTap, this.cardChild});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: color,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: color,
+        ),
+        child: cardChild,
       ),
-      child: cardChild,
     );
   }
 }

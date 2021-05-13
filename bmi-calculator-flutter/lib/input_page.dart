@@ -1,11 +1,10 @@
+import 'dart:ui';
+
+import 'package:bmi_calculator/constants.dart';
 import 'package:bmi_calculator/reusable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const double bottomContainerHeight = 80;
-const Color bottomContainerColor = Color(0xffeb1555);
-const Color activeCardColor = Color(0xff1f1e33);
-const Color inactiveCardColor = Color(0xff111328);
 enum Gender { Male, Female }
 
 class InputPage extends StatefulWidget {
@@ -14,8 +13,8 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-  Color maleCardColor = inactiveCardColor;
-  Color femaleCardColor = inactiveCardColor;
+  Gender selectedGender;
+  int height = 180;
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +25,34 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: GestureDetector(
+                  child: ReusableCard(
                     onTap: () {
-                      updateColor(Gender.Male);
+                      setState(() {
+                        selectedGender = Gender.Male;
+                      });
                     },
-                    child: ReusableCard(
-                      color: maleCardColor,
-                      cardChild: ReusableCardContent(
-                        icon: FontAwesomeIcons.mars,
-                        label: 'MALE',
-                      ),
+                    color: selectedGender == Gender.Male
+                        ? kActiveCardColor
+                        : kInactiveCardColor,
+                    cardChild: ReusableCardContent(
+                      icon: FontAwesomeIcons.mars,
+                      label: 'MALE',
                     ),
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
+                  child: ReusableCard(
                     onTap: () {
-                      updateColor(Gender.Female);
+                      setState(() {
+                        selectedGender = Gender.Female;
+                      });
                     },
-                    child: ReusableCard(
-                      color: femaleCardColor,
-                      cardChild: ReusableCardContent(
-                        icon: FontAwesomeIcons.venus,
-                        label: 'FEMALE',
-                      ),
+                    color: selectedGender == Gender.Female
+                        ? kActiveCardColor
+                        : kInactiveCardColor,
+                    cardChild: ReusableCardContent(
+                      icon: FontAwesomeIcons.venus,
+                      label: 'FEMALE',
                     ),
                   ),
                 ),
@@ -60,7 +63,35 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: ReusableCard(color: activeCardColor),
+                  child: ReusableCard(
+                    color: kActiveCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Height', style: kLabelTextStyle),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text('$height', style: kBigTextStyle),
+                            Text('cm', style: kLabelTextStyle),
+                          ],
+                        ),
+                        Slider(
+                          value: height.toDouble(),
+                          min: kMinHeight,
+                          max: kMaxHeight,
+                          activeColor: kBottomContainerColor,
+                          onChanged: (double newValue) {
+                            setState(() {
+                              height = newValue.round();
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -69,34 +100,22 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: ReusableCard(color: activeCardColor),
+                  child: ReusableCard(color: kActiveCardColor),
                 ),
                 Expanded(
-                  child: ReusableCard(color: activeCardColor),
+                  child: ReusableCard(color: kActiveCardColor),
                 ),
               ],
             ),
           ),
           Container(
-            color: bottomContainerColor,
+            color: kBottomContainerColor,
             margin: EdgeInsets.only(top: 10),
             width: double.infinity,
-            height: bottomContainerHeight,
+            height: kBottomContainerHeight,
           )
         ],
       ),
     );
-  }
-
-  void updateColor(Gender gender) {
-    setState(() {
-      if (gender == Gender.Male) {
-        maleCardColor = activeCardColor;
-        femaleCardColor = inactiveCardColor;
-        return;
-      }
-      maleCardColor = inactiveCardColor;
-      femaleCardColor = activeCardColor;
-    });
   }
 }
